@@ -228,3 +228,6 @@ poetry.toml
 # ignore clab files
 clab-*
 *.bak
+
+# ignore files in .temp folder
+.temp/*

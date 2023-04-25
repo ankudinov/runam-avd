@@ -1,0 +1,18 @@
+{
+    "__main_parser": {
+        "help": "=== runAM (run Arista Module) CLI help ===\n    To enable autocomplete run: eval \"$(register-python-argcomplete runAM)\"",
+        "add_argument": [
+            {
+                "arg_name": "--echo",
+                "arg_short_name": "-e",
+                "action": "store_true",
+                "default": true,
+                "help": "Print child module output if available."
+            }
+        ]
+    },
+    "tools.time_stamp": {
+        "python_module": "runAM.tools.time_stamp",
+        "help": "Print current time as Y-M-D H-M-S. In case you are lost in space and time and your terminal has no timestamp enabled. =)"
+    }
+}
