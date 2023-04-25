@@ -1,0 +1,47 @@
+{
+    "name": "runam-avd",
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.9-bullseye",
+    "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+	"workspaceFolder": "${localWorkspaceFolder}",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // python
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.isort",
+                // python auto-doc string
+				"njpwerner.autodocstring",
+                // python test explorer for VScode
+				"littlefoxteam.vscode-python-test-adapter",
+				// git essentials
+				"piotrpalarz.vscode-gitignore-generator",
+				"mhutchie.git-graph",
+				"donjayamanne.githistory",
+				// spell checker
+				"streetsidesoftware.code-spell-checker",
+                // errors and highlighters
+				"IgorSbitnev.error-gutters",
+				"fabiospampinato.vscode-highlight",
+				"mechatroner.rainbow-csv",
+				// excalidraw
+				"pomdtr.excalidraw-editor",
+				// markdown
+				"yzhang.markdown-all-in-one",
+				"bierner.markdown-checkbox",
+				"telesoho.vscode-markdown-paste-image",
+				"yzane.markdown-pdf",
+				"bierner.markdown-mermaid",
+				"AlanWalk.markdown-toc",
+				"DavidAnson.vscode-markdownlint",
+				// various tools
+				"tuxtina.json2yaml",
+				"vscode-icons-team.vscode-icons",
+				"tomoki1207.pdf",
+				"mutantdino.resourcemonitor",
+				"janisdd.vscode-edit-csv",
+				"oderwat.indent-rainbow",
+				"samuelcolvin.jinjahtml"
+            ]}
+    }
+}
