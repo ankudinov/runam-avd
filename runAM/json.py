@@ -2,7 +2,7 @@ import json
 import sys
 from runAM.tools.find import file_full_path
 
-def json_file(json_file_name):
+def read(json_file_name):
     try:
         with open(file_full_path(json_file_name)[0]) as f:
             return json.load(f)

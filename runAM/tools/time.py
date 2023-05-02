@@ -1,9 +1,9 @@
 from time import time as time
 from datetime import datetime as datetime
 
-def time_stamp():
+def current_time():
     """
-    time_stamp function returns current system time as Y-M-D H-M-S string
+    current_time function returns current system time as Y-M-D H-M-S string
     Args:
         no arguments required
     
