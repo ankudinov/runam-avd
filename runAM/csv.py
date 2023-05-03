@@ -1,6 +1,8 @@
 import sys
 import runAM.tools.find
 import csv
+import os
+
 
 def read(csv_file_name):
     try:
@@ -31,3 +33,21 @@ def read(csv_file_name):
             return vars_from_csv
     except Exception as e:
         sys.exit(f'ERROR: Can not load the JSON file {csv_file_name} due to following error:\n{e}')
+
+
+def read_all_from_dir(csv_data_directory):
+
+    data_loaded_from_csvs = dict()
+
+    # build full path list of all files ending with .csv
+    csv_file_list = runAM.tools.find.file_full_path('\.csv$', csv_data_directory, single_match=False, regex=True)
+    # load data
+    for a_file in csv_file_list:
+        csv_data = read(a_file)
+        csv_basename = os.path.basename(a_file)
+        data_loaded_from_csvs.update({
+            # [:-4] removes .csv
+            csv_basename.lower()[:-4]: csv_data
+            })
+        
+    return data_loaded_from_csvs
