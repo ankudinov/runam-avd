@@ -4,10 +4,14 @@ import csv
 import os
 
 
-def read(csv_file_name):
+def read(csv_file_name, is_full_path = False):
     try:
         csv_row_dict_list = list()  # list of key-value pairs produced from every CSV row except header
-        with open(runAM.tools.find.file_full_path(csv_file_name)[0], mode='r') as csv_file:
+        if is_full_path:
+            full_path_to_csv = csv_file_name
+        else:
+            full_path_to_csv = runAM.tools.find.file_full_path(csv_file_name)[0]
+        with open(full_path_to_csv, mode='r') as csv_file:
             # if header contains __CCvar and __CCvalue CSV will be processed vertically
             # each row will be treated as separate variable with a name of __CCvar
             vars_from_csv = dict()
@@ -43,7 +47,7 @@ def read_all_from_dir(csv_data_directory):
     csv_file_list = runAM.tools.find.file_full_path('\.csv$', csv_data_directory, single_match=False, regex=True)
     # load data
     for a_file in csv_file_list:
-        csv_data = read(a_file)
+        csv_data = read(a_file, is_full_path=True)
         csv_basename = os.path.basename(a_file)
         data_loaded_from_csvs.update({
             # [:-4] removes .csv
