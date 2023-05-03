@@ -11,8 +11,8 @@
             }
         ]
     },
-    "tools.time_stamp": {
-        "python_module": "runAM.tools.time_stamp",
+    "tools.time.current_time": {
+        "python_module": "runAM.tools.time.current_time",
         "help": "Print current time as Y-M-D H-M-S. In case you are lost in space and time and your terminal has no timestamp enabled. =)"
     }
 }
