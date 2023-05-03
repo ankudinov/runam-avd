@@ -45,5 +45,17 @@
                 "help": "Filename to search."
             }
         ]
+    },
+    "csv.read_all_from_dir": {
+        "python_module": "runAM.csv.read_all_from_dir",
+        "help": "Read all CSV files in the specified directory and return a dictionary.",
+        "add_argument": [
+            {
+                "arg_name": "--csv_data_directory",
+                "arg_short_name": "-dir",
+                "default": ".",
+                "help": "Directory to search for CSV files."
+            },
+        ]
     }
 }
