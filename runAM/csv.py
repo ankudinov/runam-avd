@@ -32,7 +32,7 @@ def read(csv_file_name):
         else:
             return vars_from_csv
     except Exception as e:
-        sys.exit(f'ERROR: Can not load the JSON file {csv_file_name} due to following error:\n{e}')
+        sys.exit(f'ERROR: Can not load the CSV file {csv_file_name} due to following error:\n{e}')
 
 
 def read_all_from_dir(csv_data_directory):
