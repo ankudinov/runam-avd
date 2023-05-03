@@ -14,5 +14,29 @@
     "tools.time.current_time": {
         "python_module": "runAM.tools.time.current_time",
         "help": "Print current time as Y-M-D H-M-S. In case you are lost in space and time and your terminal has no timestamp enabled. =)"
+    },
+    "tools.find.file_full_path": {
+        "python_module": "runAM.tools.find.file_full_path",
+        "help": "Find all files matching the name in the specified directory or current directory (if dirname is not specified).",
+        "add_argument": [
+            {
+                "arg_name": "--single_match",
+                "arg_short_name": "-sm",
+                "action": "store_true",
+                "default": false,
+                "help": "Find first match only."
+            },
+            {
+                "arg_name": "--dirname",
+                "arg_short_name": "-dir",
+                "default": ".",
+                "help": "Directory to search for the specified name."
+            },
+            {
+                "arg_name": "--filename",
+                "arg_short_name": "-f",
+                "help": "Filename to search."
+            }
+        ]
     }
 }
