@@ -27,6 +27,13 @@
                 "help": "Find single match only. If multiple files with the same name will be discovered an error will be returned."
             },
             {
+                "arg_name": "--regex",
+                "arg_short_name": "-re",
+                "action": "store_true",
+                "default": false,
+                "help": "Match filename as regular expression."
+            },
+            {
                 "arg_name": "--dirname",
                 "arg_short_name": "-dir",
                 "default": ".",
