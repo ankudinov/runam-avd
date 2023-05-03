@@ -4,6 +4,7 @@ import argcomplete
 import inspect
 import sys
 import json
+import importlib
 
 
 def interpreter():
@@ -69,6 +70,10 @@ def run_module(module_name_string, args_dict):
     args = list()
     kwargs = dict()
 
+    try:
+        importlib.import_module(module_name_string.rsplit('.', 1)[0])
+    except Exception as e:
+        sys.exit(f'ERROR: Can not import the module named {module_name_string.rsplit(".", 1)[0]}')
     module_signature = inspect.signature(eval(module_name_string))
     for module_param_name in module_signature.parameters.keys():
         if module_signature.parameters[module_param_name].default is inspect._empty:
@@ -84,6 +89,7 @@ def run_module(module_name_string, args_dict):
                 })
 
     if module_name_string.startswith('runAM'):  # simple way to keep eval() safe
+        # the module must be imported with importlib as well to be executed
         return eval(module_name_string)(*args, **kwargs)
 
 
