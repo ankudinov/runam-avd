@@ -55,7 +55,7 @@
                 "arg_short_name": "-dir",
                 "default": ".",
                 "help": "Directory to search for CSV files."
-            },
+            }
         ]
     }
 }

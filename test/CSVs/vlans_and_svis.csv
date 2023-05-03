@@ -1,0 +1,3 @@
+tenant_name,vlan_number,vlan_name,filter_tags,ip_vrf,ip_virtual_address_and_mask
+TENANT_A,10,TEST_VLAN_10,"test_app, all",VRF10,10.10.10.1/24
+TENANT_A,20,TEST_VLAN_20,"test_app, all",VRF20,10.20.20.1/24
