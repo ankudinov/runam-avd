@@ -58,8 +58,8 @@
             }
         ]
     },
-    "avd.convert.CSVtoAVD": {
-        "python_module": "runAM.avd.convert.CSVtoAVD",
+    "avd.convert_csv.to_avd_yaml": {
+        "python_module": "runAM.avd.convert_csv.to_avd_yaml",
         "help": "Convert port/tenants CSV variables from the specified directory into AVD variables.",
         "add_argument": [
             {
