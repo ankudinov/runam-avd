@@ -57,5 +57,17 @@
                 "help": "Directory to search for CSV files."
             }
         ]
+    },
+    "avd.convert.CSVtoAVD": {
+        "python_module": "runAM.avd.convert.CSVtoAVD",
+        "help": "Convert port/tenants CSV variables from the specified directory into AVD variables.",
+        "add_argument": [
+            {
+                "arg_name": "--csv_data_directory",
+                "arg_short_name": "-dir",
+                "default": ".",
+                "help": "Directory to search for CSV files."
+            }
+        ]
     }
 }
