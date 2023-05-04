@@ -1,4 +1,4 @@
-server_name,switch_hostname,switch_port,description,port_channel_mode,rack_name,profile,speed
+server_name,switch_hostname,switch_port,description,port_channel_mode,rack,profile,speed
 server1, L01, Ethernet1/1, link-to-server1, active, pod0, A_TRUNK_PROFILE, forced 25gfull
 server1, L02, Ethernet1/2, link-to-server1, active, pod0, A_TRUNK_PROFILE, forced 25gfull
 server2, L02, Ethernet1/1, link-to-server2, active, pod0, A_TRUNK_PROFILE, forced 25gfull

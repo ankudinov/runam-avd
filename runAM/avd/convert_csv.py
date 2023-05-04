@@ -12,7 +12,12 @@ def to_avd_yaml(csv_data_directory):
     # bu allows adding and deleting logic blocks in a simple way
 
     # 1. add server names to the AVD vars
+    #    this method only allows to add new servers
+    #    and will stop the script with error if existing server is updated without being deleted first
+    #    WARNING: never remove this method from the logic, as it creates the server dictionary
     converter.add_servers_names()
+    # add rack names if present
+    converter.add_rack_name()
 
     return converter.vars
 
@@ -29,13 +34,23 @@ class CSVtoAVDConverter:
 
     def add_servers_names(self):
         new_server_names_list = list()
-        for server in self.vars['csv']['servers']:
+        for csv_server in self.vars['csv']['servers']:
             if 'servers' not in self.vars['avd'].keys():
                 self.vars['avd'].update({'servers': dict()})
-            if server['server_name'] in new_server_names_list:
+            if csv_server['server_name'] in new_server_names_list:
                 pass  # if server name was added on the previous iteration, do nothing
-            elif server['server_name'] in self.vars['avd']['servers'].keys():
-                sys.exit(f'ERROR: server {server["server_name"]} is already present in AVD vars and must be deleted before it can be updated!')
+            elif csv_server['server_name'] in self.vars['avd']['servers'].keys():
+                sys.exit(f'ERROR: server {csv_server["server_name"]} is already present in AVD vars and must be deleted before it can be updated!')
             else:
-                new_server_names_list.append(server['server_name'])
-                self.vars['avd']['servers'].update({server['server_name']: dict()})
+                new_server_names_list.append(csv_server['server_name'])
+                self.vars['avd']['servers'].update({csv_server['server_name']: dict()})
+
+    def add_rack_name(self):
+        for csv_server in self.vars['csv']['servers']:
+            avd_server = self.vars['avd']['servers'][csv_server['server_name']]
+            if 'rack' in avd_server.keys():
+                if avd_server['rack'] != csv_server['rack']:
+                    # error if rack name was added on the previous iteration and is not the same in CSV entries
+                    sys.exit(f'ERROR: different rack names specified for the same server ID {csv_server["server_name"]}')
+            elif 'rack' in csv_server.keys():
+                avd_server.update({'rack': csv_server['rack']})
