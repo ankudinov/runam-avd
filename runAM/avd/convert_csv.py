@@ -108,4 +108,18 @@ class CSVtoAVDConverter:
 
     def add_description(self):
         # add description for existing adapters
-        pass
+        # adapter must exist before description can be added
+        for avd_server_name in self.vars['avd']['servers'].keys():
+            avd_server = self.vars['avd']['servers'][avd_server_name]
+            csv_entry_list = [ csv_entry for csv_entry in self.vars['csv']['servers'] if csv_entry['server_name'] == avd_server_name]
+            # verify that description is the same for an adapter
+            description_string = ''
+            for csv_entry in csv_entry_list:
+                if not description_string:
+                    description_string = csv_entry['description']
+                elif description_string != csv_entry['description']:
+                    sys.exit(f'ERROR: same description must be configured for all CSV entries corresponding to a single adapter. Verify {avd_server_name} settings.')
+            # update description
+            # there should be a single adapter, but we'll walk the list to keep it universal
+            for adapter in avd_server['adapters']:
+                adapter['description'] = description_string
