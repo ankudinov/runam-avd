@@ -18,6 +18,8 @@ def to_avd_yaml(csv_data_directory):
     converter.add_servers_names()
     # add rack names if present
     converter.add_rack_name()
+    # add adapters
+    converter.add_adapters()
 
     return converter.vars
 
@@ -54,3 +56,26 @@ class CSVtoAVDConverter:
                     sys.exit(f'ERROR: different rack names specified for the same server ID {csv_server["server_name"]}')
             elif 'rack' in csv_server.keys():
                 avd_server.update({'rack': csv_server['rack']})
+
+    def add_adapters(self):
+        for avd_server_name in self.vars['avd']['servers'].keys():
+            avd_server = self.vars['avd']['servers'][avd_server_name]
+            csv_entry_list = [ csv_entry for csv_entry in self.vars['csv']['servers'] if csv_entry['server_name'] == avd_server_name]
+            switch_ports_list = list()
+            switches_list = list()
+            endpoint_ports_list = list()
+            for csv_entry in csv_entry_list:
+                # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
+                switch_ports_list.append(csv_entry['switch_port'])
+                switches_list.append(csv_entry['switch_hostname'])
+                if 'endpoint_port' in csv_entry.keys():
+                    endpoint_ports_list.append(csv_entry['endpoint_port'])
+            avd_server.update({
+                'adapters': [
+                    {
+                        'switches': switches_list,
+                        'switch_port': switch_ports_list,
+                        'endpoint_ports': endpoint_ports_list
+                    }
+                ]
+            })
