@@ -20,6 +20,8 @@ def to_avd_yaml(csv_data_directory):
     converter.add_rack_name()
     # add adapters
     converter.add_adapters()
+    # add description to adapters
+    converter.add_description()
 
     return converter.vars
 
@@ -35,6 +37,7 @@ class CSVtoAVDConverter:
         }
 
     def add_servers_names(self):
+        # add { server_name: { 'adapters': [] } } dictionary for a new server
         new_server_names_list = list()
         for csv_server in self.vars['csv']['servers']:
             if 'servers' not in self.vars['avd'].keys():
@@ -45,9 +48,14 @@ class CSVtoAVDConverter:
                 sys.exit(f'ERROR: server {csv_server["server_name"]} is already present in AVD vars and must be deleted before it can be updated!')
             else:
                 new_server_names_list.append(csv_server['server_name'])
-                self.vars['avd']['servers'].update({csv_server['server_name']: dict()})
+                self.vars['avd']['servers'].update({
+                    csv_server['server_name']: {
+                        'adapters': list()
+                    }
+                })
 
     def add_rack_name(self):
+        # add rack name for a server if defined in CSV file
         for csv_server in self.vars['csv']['servers']:
             avd_server = self.vars['avd']['servers'][csv_server['server_name']]
             if 'rack' in avd_server.keys():
@@ -58,6 +66,9 @@ class CSVtoAVDConverter:
                 avd_server.update({'rack': csv_server['rack']})
 
     def add_adapters(self):
+        # add adapters for a server
+        # adapter is a combination of following key-values: switches (mandatory), switch_ports (mandatory), endpoint_ports (if present in CSV)
+        # additional adapter configuration will be added by separate functions
         for avd_server_name in self.vars['avd']['servers'].keys():
             avd_server = self.vars['avd']['servers'][avd_server_name]
             csv_entry_list = [ csv_entry for csv_entry in self.vars['csv']['servers'] if csv_entry['server_name'] == avd_server_name]
@@ -66,16 +77,32 @@ class CSVtoAVDConverter:
             endpoint_ports_list = list()
             for csv_entry in csv_entry_list:
                 # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
-                switch_ports_list.append(csv_entry['switch_port'])
-                switches_list.append(csv_entry['switch_hostname'])
+                if 'switch_port' in csv_entry.keys():
+                    if csv_entry['switch_port']:
+                        switch_ports_list.append(csv_entry['switch_port'])
+                    else:
+                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {avd_server_name}')
+                else:
+                    sys.exit('ERROR: switch_port is a mandatory field and must be defined in the CSV file.')
+                if 'switch_hostname' in csv_entry.keys():
+                    if csv_entry['switch_hostname']:
+                        switches_list.append(csv_entry['switch_hostname'])
+                    else:
+                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {avd_server_name}')
+                else:
+                    sys.exit('ERROR: switch_hostname is a mandatory field and must be defined in the CSV file.')
                 if 'endpoint_port' in csv_entry.keys():
                     endpoint_ports_list.append(csv_entry['endpoint_port'])
             avd_server.update({
                 'adapters': [
                     {
                         'switches': switches_list,
-                        'switch_port': switch_ports_list,
+                        'switch_ports': switch_ports_list,
                         'endpoint_ports': endpoint_ports_list
                     }
                 ]
             })
+
+    def add_description():
+        # add description for existing adapters
+        pass
