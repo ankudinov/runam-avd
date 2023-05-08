@@ -1,6 +1,16 @@
 # Load the data from CSVs and convert the processed data to AVD variables.
 import runAM.csv
 import sys
+import glom
+
+
+class GlomDict(dict):
+
+    def assign(self, glom_path, value):
+        glom.assign(self, glom_path, value, missing=dict)
+
+    def glom(self, glom_spec):
+        return glom.glom(self, glom_spec)
 
 
 def to_avd_yaml(csv_data_directory):
@@ -31,10 +41,10 @@ class CSVtoAVDConverter:
     def __init__(self, csv_data_directory) -> None:
 
         # init dictionary to build AVD port provisioning variables
-        self.vars = {
+        self.vars = GlomDict({
             'csv': runAM.csv.read_all_from_dir(csv_data_directory),  # load data from CSV files
             'avd': dict(),  # store AVD variables
-        }
+        })
 
     def add_servers_names(self):
         # add { server_name: { 'adapters': [] } } dictionary for a new server
