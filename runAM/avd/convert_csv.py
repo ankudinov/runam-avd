@@ -102,7 +102,7 @@ class CSVtoAVDConverter:
                     if csv_entry['switch_port']:
                         adapter_dict['switch_ports'].append(csv_entry['switch_port'])
                     else:
-                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {avd_server_name}')
+                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {k}')
                 else:
                     sys.exit('ERROR: switch_port is a mandatory field and must be defined in the CSV file.')
 
@@ -110,7 +110,7 @@ class CSVtoAVDConverter:
                     if csv_entry['switch_hostname']:
                         adapter_dict['switches'].append(csv_entry['switch_hostname'])
                     else:
-                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {avd_server_name}')
+                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {k}')
                 else:
                     sys.exit('ERROR: switch_hostname is a mandatory field and must be defined in the CSV file.')
 
