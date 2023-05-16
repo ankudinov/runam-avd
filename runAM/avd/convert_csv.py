@@ -113,10 +113,7 @@ class CSVtoAVDConverter:
         # adapter is a combination of following key-values: switches (mandatory), switch_ports (mandatory), endpoint_ports (if present in CSV)
         # additional adapter configuration will be added by separate functions
         for server_name, server_vars in self.get_avd_servers():
-            adapter_dict = {
-                'switches': list(),
-                'switch_ports': list(),
-            }
+            adapter_dict = dict()  # dict to add switch_ports, switches, endpoint_ports keys 
 
             # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
             adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
