@@ -140,12 +140,11 @@ class CSVtoAVDConverter:
         # add description for existing adapters
         # adapter must exist before description can be added
 
-        for server_name, server_vars in self.get_avd_servers():
+        for server_name, _ in self.get_avd_servers():
             description_string = self.get_csv(server_name, csv_key='rack', unique=True)[0]
-            server_vars['adapters'][0].update({'description': description_string})
-            self.vars['avd']['servers'].update({server_name: server_vars})
+            self.update_adapters(server_name, {'description': description_string})
 
     def add_speed(self):
-        for server_name, server_vars in self.get_avd_servers():
+        for server_name, _ in self.get_avd_servers():
             speed_string = self.get_csv(server_name, csv_key='speed', unique=True)[0]
             self.update_adapters(server_name, {'speed': speed_string})
