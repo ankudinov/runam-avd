@@ -47,6 +47,7 @@ def to_avd_yaml(csv_data_directory):
     converter.add_profile()
     converter.add_enabled_status()
     converter.add_mode()
+    converter.add_mtu()
 
     return converter.vars
 
@@ -189,3 +190,17 @@ class CSVtoAVDConverter:
             if mode_string.lower() not in ['access', 'dot1q-tunnel', 'trunk']:
                 sys.exit(f'ERROR: "mode" key must be set to "access", "dot1q-tunnel" or "trunk", but it is set to "{mode_string}" for the {server_name}!')
             self.update_adapters(server_name, {'mode': mode_string.lower()})
+
+    @ignore_error
+    def add_mtu(self):
+        for server_name, _ in self.get_avd_servers():
+            mode_string = self.get_csv(server_name, csv_key='mtu', unique=True)[0]
+            try:
+                mtu = int(mode_string)
+            except:
+                sys.exit(f'ERROR: can not convert MTU "{mode_string}" to integer for {server_name}!')
+            else:
+                if 1 <= mtu <= 9216:
+                    self.update_adapters(server_name, {'mtu': mode_string.lower()})
+                else:
+                    sys.exit(f'ERROR: MTU must be between 1 and 9216. It is set to {mtu} for {server_name}! ')
