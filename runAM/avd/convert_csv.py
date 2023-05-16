@@ -123,6 +123,7 @@ class CSVtoAVDConverter:
                     csv_server_name: { 'adapters': list() }
                 })
 
+    @ignore_error
     def add_rack_name(self):
         # add rack name for a server if defined in CSV file
         for server_name, server_vars in self.get_avd_servers():
@@ -148,25 +149,28 @@ class CSVtoAVDConverter:
             server_vars.update({'adapters': [adapter_dict]})
             self.vars['avd']['servers'].update({server_name: server_vars})
 
-
+    @ignore_error
     def add_description(self):
         # add description for existing adapters
         # adapter must exist before description can be added
 
         for server_name, _ in self.get_avd_servers():
-            description_string = self.get_csv(server_name, csv_key='rack', unique=True)[0]
+            description_string = self.get_csv(server_name, csv_key='description', unique=True)[0]
             self.update_adapters(server_name, {'description': description_string})
 
+    @ignore_error
     def add_speed(self):
         for server_name, _ in self.get_avd_servers():
             speed_string = self.get_csv(server_name, csv_key='speed', unique=True)[0]
             self.update_adapters(server_name, {'speed': speed_string})
 
+    @ignore_error
     def add_profile(self):
         for server_name, _ in self.get_avd_servers():
             profile_string = self.get_csv(server_name, csv_key='profile', unique=True)[0]
             self.update_adapters(server_name, {'profile': profile_string})
 
+    @ignore_error
     def add_enabled_status(self):
         for server_name, _ in self.get_avd_servers():
             enable_string = self.get_csv(server_name, csv_key='enabled', unique=True)[0]
