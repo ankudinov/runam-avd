@@ -62,7 +62,10 @@ class CSVtoAVDConverter:
                 if csv_dict['server_name'] == server_name:
                     if mandatory and csv_key not in csv_dict.keys():
                         sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but not defined for {server_name}!')
-                    csv_value_list.append(csv_dict[csv_key])
+                    elif csv_key in csv_dict.keys():
+                        # if key is not present, do not add anything
+                        # a empty list can be returned
+                        csv_value_list.append(csv_dict[csv_key])
             if unique:
                 if len(set(csv_value_list)) > 1:
                     sys.exit(f'ERROR: different {csv_key} CSV values were defined for {server_name}. {csv_key} must be unique!')
@@ -117,33 +120,15 @@ class CSVtoAVDConverter:
             }
             for csv_entry in self.get_csv(server_name):
                 # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
-                if 'switch_port' in csv_entry.keys():
-                    if csv_entry['switch_port']:
-                        adapter_dict['switch_ports'].append(csv_entry['switch_port'])
-                    else:
-                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {server_name}')
-                else:
-                    sys.exit('ERROR: switch_port is a mandatory field and must be defined in the CSV file.')
-
-                if 'switch_hostname' in csv_entry.keys():
-                    if csv_entry['switch_hostname']:
-                        adapter_dict['switches'].append(csv_entry['switch_hostname'])
-                    else:
-                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {server_name}')
-                else:
-                    sys.exit('ERROR: switch_hostname is a mandatory field and must be defined in the CSV file.')
-
-                if 'endpoint_port' in csv_entry.keys():
-                    if csv_entry['endpoint_port']:
-                        adapter_dict['endpoint_ports'].append(csv_entry['endpoint_port'])
-
-            # check if endpoint_ports was defined, remove if not as it's optional
-            if len(adapter_dict['endpoint_ports']) == 0:
-                del adapter_dict['endpoint_ports']
-            else:
-                # if endpoint_ports was defined it must have the same length as switches
-                if len(adapter_dict['endpoint_ports']) != len(adapter_dict['switches']):
-                    sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
+                adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
+                adapter_dict['switches'] = self.get_csv(server_name, csv_key='switch_hostname', mandatory=True)
+                endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port')
+                if len(endpoint_ports_list) > 0:
+                    # if endpoint_ports was defined it must have the same length as switches
+                    if len(endpoint_ports_list) != len(adapter_dict['switches']):
+                        sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
+                    adapter_dict['endpoint_ports'] = self.get_csv(server_name, csv_key='endpoint_port')
+                adapter_dict['endpoint_ports'] = endpoint_ports_list
 
             server_vars.update({'adapters': [adapter_dict]})
             self.vars['avd']['servers'].update({server_name: server_vars})
