@@ -93,6 +93,10 @@ class CSVtoAVDConverter:
             sys.exit(f'ERROR: server {server_name} is not present in AVD vars!')
         else:
             return self.vars['avd']['servers'][server_name]
+        
+    def update_adapters(self, server_name, new_dict):
+        # there is always just a single adapter in the list
+        self.vars['avd']['servers'][server_name]['adapters'][0].update(new_dict)
 
     def add_servers_names(self):
         # add { server_name: { 'adapters': [] } } dictionary for a new server
@@ -144,5 +148,4 @@ class CSVtoAVDConverter:
     def add_speed(self):
         for server_name, server_vars in self.get_avd_servers():
             speed_string = self.get_csv(server_name, csv_key='speed', unique=True)[0]
-            server_vars['adapters'][0].update({'speed': speed_string})
-            self.vars['avd']['servers'].update({server_name: server_vars})
+            self.update_adapters(server_name, {'speed': speed_string})
