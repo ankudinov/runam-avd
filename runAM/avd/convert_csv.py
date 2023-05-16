@@ -30,10 +30,10 @@ def to_avd_yaml(csv_data_directory):
     converter.add_rack_name()
     # add adapters
     converter.add_adapters()
-    # add description to adapters
+    # add various parameters to the adapter
     converter.add_description()
-    # add speed to adapters
     converter.add_speed()
+    converter.add_profile()
 
     return converter.vars
 
@@ -148,3 +148,8 @@ class CSVtoAVDConverter:
         for server_name, _ in self.get_avd_servers():
             speed_string = self.get_csv(server_name, csv_key='speed', unique=True)[0]
             self.update_adapters(server_name, {'speed': speed_string})
+
+    def add_profile(self):
+        for server_name, _ in self.get_avd_servers():
+            speed_string = self.get_csv(server_name, csv_key='profile', unique=True)[0]
+            self.update_adapters(server_name, {'profile': speed_string})
