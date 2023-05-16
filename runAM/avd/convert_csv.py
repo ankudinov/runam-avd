@@ -50,7 +50,7 @@ class CSVtoAVDConverter:
         unique_csv_server_names = set([ csv_server['server_name'] for csv_server in self.vars['csv']['servers'] ])
         return list(unique_csv_server_names)
         
-    def get_csv_by_server_name(self, server_name, csv_key='', mandatory=False, unique=False):
+    def get_csv(self, server_name, csv_key='', mandatory=False, unique=False):
         # get CSV values for specific server
         # if csv_key is not defined, a list of dictionaries with all values will be returned
         # if csv_key is defined, the list of values for this key and specific server will be returned
@@ -103,7 +103,7 @@ class CSVtoAVDConverter:
     def add_rack_name(self):
         # add rack name for a server if defined in CSV file
         for server_name, server_vars in self.get_avd_servers():
-            rack_name_set = set([ csv['rack'] for csv in self.get_csv_by_server_name(server_name) ])
+            rack_name_set = set([ csv['rack'] for csv in self.get_csv(server_name) ])
             if len(rack_name_set) > 1:
                 # error if rack name was added on the previous iteration and is not the same in CSV entries
                 sys.exit(f'ERROR: different rack names specified for the same server ID {server_name}')
@@ -121,7 +121,7 @@ class CSVtoAVDConverter:
                 'switch_ports': list(),
                 'endpoint_ports': list()
             }
-            for csv_entry in self.get_csv_by_server_name(server_name):
+            for csv_entry in self.get_csv(server_name):
                 # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
                 if 'switch_port' in csv_entry.keys():
                     if csv_entry['switch_port']:
@@ -159,7 +159,7 @@ class CSVtoAVDConverter:
         # add description for existing adapters
         # adapter must exist before description can be added
         for server_name, server_vars in self.get_avd_servers():
-            description_set = set([ csv['description'] for csv in self.get_csv_by_server_name(server_name) ])
+            description_set = set([ csv['description'] for csv in self.get_csv(server_name) ])
             if len(description_set) > 1:
                 sys.exit(f'ERROR: same description must be configured for all CSV entries corresponding to a single adapter. Verify {server_name} settings.')
             else:
