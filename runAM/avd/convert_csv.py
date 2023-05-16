@@ -65,8 +65,8 @@ class CSVtoAVDConverter:
                             sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but the key is not defined in the CSV table!')
                         elif not csv_dict[csv_key]:
                             sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but value is not defined for {server_name}!')
-                    elif csv_key in csv_dict.keys():
-                        # only add value to the list if key is present amd the value is defined and not null
+                    if csv_key in csv_dict.keys():
+                        # only add value to the list if key is present and the value is defined and not null
                         if csv_dict[csv_key]:
                             csv_value_list.append(csv_dict[csv_key])
             if unique:
@@ -121,13 +121,10 @@ class CSVtoAVDConverter:
             # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
             adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
             adapter_dict['switches'] = self.get_csv(server_name, csv_key='switch_hostname', mandatory=True)
-            endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port', mandatory=True)
-            if len(endpoint_ports_list) > 0:
-                # if endpoint_ports was defined it must have the same length as switches
-                if len(endpoint_ports_list) != len(adapter_dict['switches']):
-                    sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
-                adapter_dict['endpoint_ports'] = self.get_csv(server_name, csv_key='endpoint_port')
-            adapter_dict['endpoint_ports'] = endpoint_ports_list
+            try:
+                adapter_dict['endpoint_ports'] = self.get_csv(server_name, csv_key='endpoint_port', mandatory=True)
+            except:
+                pass  # this is allowed to fail if endpoint_port is not defined in CSV
 
             server_vars.update({'adapters': [adapter_dict]})
             self.vars['avd']['servers'].update({server_name: server_vars})
