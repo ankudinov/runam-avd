@@ -60,12 +60,15 @@ class CSVtoAVDConverter:
             csv_value_list = list()
             for csv_dict in self.vars['csv']['servers']:
                 if csv_dict['server_name'] == server_name:
-                    if mandatory and csv_key not in csv_dict.keys():
-                        sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but not defined for {server_name}!')
+                    if mandatory:
+                        if csv_key not in csv_dict.keys():
+                            sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but the key is not defined in the CSV table!')
+                        elif not csv_dict[csv_key]:
+                            sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but value is not defined for {server_name}!')
                     elif csv_key in csv_dict.keys():
-                        # if key is not present, do not add anything
-                        # a empty list can be returned
-                        csv_value_list.append(csv_dict[csv_key])
+                        # only add value to the list if key is present amd the value is defined and not null
+                        if csv_dict[csv_key]:
+                            csv_value_list.append(csv_dict[csv_key])
             if unique:
                 if len(set(csv_value_list)) > 1:
                     sys.exit(f'ERROR: different {csv_key} CSV values were defined for {server_name}. {csv_key} must be unique!')
@@ -118,7 +121,7 @@ class CSVtoAVDConverter:
             # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
             adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
             adapter_dict['switches'] = self.get_csv(server_name, csv_key='switch_hostname', mandatory=True)
-            endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port')
+            endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port', mandatory=True)
             if len(endpoint_ports_list) > 0:
                 # if endpoint_ports was defined it must have the same length as switches
                 if len(endpoint_ports_list) != len(adapter_dict['switches']):
