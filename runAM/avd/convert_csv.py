@@ -135,9 +135,6 @@ class CSVtoAVDConverter:
         # adapter must exist before description can be added
 
         for server_name, server_vars in self.get_avd_servers():
-            description_set = set([ csv['description'] for csv in self.get_csv(server_name) ])
-            if len(description_set) > 1:
-                sys.exit(f'ERROR: same description must be configured for all CSV entries corresponding to a single adapter. Verify {server_name} settings.')
-            else:
-                server_vars['adapters'][0].update({'description': list(description_set)[0]})
-                self.vars['avd']['servers'].update({server_name: server_vars})
+            description_string = self.get_csv(server_name, csv_key='rack', unique=True)[0]
+            server_vars['adapters'][0].update({'description': description_string})
+            self.vars['avd']['servers'].update({server_name: server_vars})
