@@ -96,19 +96,19 @@ class CSVtoAVDConverter:
         # add adapters for a server
         # adapter is a combination of following key-values: switches (mandatory), switch_ports (mandatory), endpoint_ports (if present in CSV)
         # additional adapter configuration will be added by separate functions
-        for k,v in self.get_avd_servers():
+        for server_name, server_vars in self.get_avd_servers():
             adapter_dict = {
                 'switches': list(),
                 'switch_ports': list(),
                 'endpoint_ports': list()
             }
-            for csv_entry in self.get_csv_by_server_name(k):
+            for csv_entry in self.get_csv_by_server_name(server_name):
                 # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
                 if 'switch_port' in csv_entry.keys():
                     if csv_entry['switch_port']:
                         adapter_dict['switch_ports'].append(csv_entry['switch_port'])
                     else:
-                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {k}')
+                        sys.exit(f'ERROR: switch_port is a mandatory field and can not be empty for {server_name}')
                 else:
                     sys.exit('ERROR: switch_port is a mandatory field and must be defined in the CSV file.')
 
@@ -116,7 +116,7 @@ class CSVtoAVDConverter:
                     if csv_entry['switch_hostname']:
                         adapter_dict['switches'].append(csv_entry['switch_hostname'])
                     else:
-                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {k}')
+                        sys.exit(f'ERROR: switch_hostname is a mandatory field and can not be empty for {server_name}')
                 else:
                     sys.exit('ERROR: switch_hostname is a mandatory field and must be defined in the CSV file.')
 
@@ -130,19 +130,19 @@ class CSVtoAVDConverter:
             else:
                 # if endpoint_ports was defined it must have the same length as switches
                 if len(adapter_dict['endpoint_ports']) != len(adapter_dict['switches']):
-                    sys.exit(f'ERROR: endpoint_ports length is different from switches length for {k}')
+                    sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
 
-            v.update({'adapters': [adapter_dict]})
-            self.vars['avd']['servers'].update({k: v})
+            server_vars.update({'adapters': [adapter_dict]})
+            self.vars['avd']['servers'].update({server_name: server_vars})
 
 
     def add_description(self):
         # add description for existing adapters
         # adapter must exist before description can be added
-        for k,v in self.get_avd_servers():
-            description_set = set([ csv['description'] for csv in self.get_csv_by_server_name(k) ])
+        for server_name, server_vars in self.get_avd_servers():
+            description_set = set([ csv['description'] for csv in self.get_csv_by_server_name(server_name) ])
             if len(description_set) > 1:
-                sys.exit(f'ERROR: same description must be configured for all CSV entries corresponding to a single adapter. Verify {k} settings.')
+                sys.exit(f'ERROR: same description must be configured for all CSV entries corresponding to a single adapter. Verify {server_name} settings.')
             else:
-                v['adapters'][0].update({'description': list(description_set)[0]})
-                self.vars['avd']['servers'].update({k: v})
+                server_vars['adapters'][0].update({'description': list(description_set)[0]})
+                self.vars['avd']['servers'].update({server_name: server_vars})
