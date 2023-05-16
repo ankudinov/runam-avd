@@ -50,8 +50,27 @@ class CSVtoAVDConverter:
         unique_csv_server_names = set([ csv_server['server_name'] for csv_server in self.vars['csv']['servers'] ])
         return list(unique_csv_server_names)
         
-    def get_csv_by_server_name(self, server_name):
-        return [ csv_dict for csv_dict in self.vars['csv']['servers'] if csv_dict['server_name'] == server_name ]
+    def get_csv_by_server_name(self, server_name, csv_key='', mandatory=False, unique=False):
+        # get CSV values for specific server
+        # if csv_key is not defined, a list of dictionaries with all values will be returned
+        # if csv_key is defined, the list of values for this key and specific server will be returned
+        # if mandatory is True, the key must be defined in the CSV
+        # if unique is True, the value must be the same for all key occurrences for the specific server
+        if csv_key:
+            csv_value_list = list()
+            for csv_dict in self.vars['csv']['servers']:
+                if csv_dict['server_name'] == server_name:
+                    if mandatory:
+                        if csv_key not in csv_dict.keys():
+                            sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but not defined for {server_name}!')
+                        else:
+                            csv_value_list.append(csv_dict[csv_key])
+            if unique:
+                if len(set(csv_value_list)) > 1:
+                    sys.exit(f'ERROR: different {csv_key} CSV values were defined for {server_name}. {csv_key} must be unique!')
+            return csv_value_list
+        else:
+            return [ csv_dict for csv_dict in self.vars['csv']['servers'] if csv_dict['server_name'] == server_name ]
 
     def get_avd_servers(self, csv_filtered=True):
         # if filtered is True only the servers to be updated will be returned
