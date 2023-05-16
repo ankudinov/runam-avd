@@ -116,19 +116,18 @@ class CSVtoAVDConverter:
             adapter_dict = {
                 'switches': list(),
                 'switch_ports': list(),
-                'endpoint_ports': list()
             }
-            for csv_entry in self.get_csv(server_name):
-                # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
-                adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
-                adapter_dict['switches'] = self.get_csv(server_name, csv_key='switch_hostname', mandatory=True)
-                endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port')
-                if len(endpoint_ports_list) > 0:
-                    # if endpoint_ports was defined it must have the same length as switches
-                    if len(endpoint_ports_list) != len(adapter_dict['switches']):
-                        sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
-                    adapter_dict['endpoint_ports'] = self.get_csv(server_name, csv_key='endpoint_port')
-                adapter_dict['endpoint_ports'] = endpoint_ports_list
+
+            # TODO: add some logic here to check for conflicting use of <sw-name>:<sw-port> combination
+            adapter_dict['switch_ports'] = self.get_csv(server_name, csv_key='switch_port', mandatory=True)
+            adapter_dict['switches'] = self.get_csv(server_name, csv_key='switch_hostname', mandatory=True)
+            endpoint_ports_list = self.get_csv(server_name, csv_key='endpoint_port')
+            if len(endpoint_ports_list) > 0:
+                # if endpoint_ports was defined it must have the same length as switches
+                if len(endpoint_ports_list) != len(adapter_dict['switches']):
+                    sys.exit(f'ERROR: endpoint_ports length is different from switches length for {server_name}')
+                adapter_dict['endpoint_ports'] = self.get_csv(server_name, csv_key='endpoint_port')
+            adapter_dict['endpoint_ports'] = endpoint_ports_list
 
             server_vars.update({'adapters': [adapter_dict]})
             self.vars['avd']['servers'].update({server_name: server_vars})
@@ -137,6 +136,7 @@ class CSVtoAVDConverter:
     def add_description(self):
         # add description for existing adapters
         # adapter must exist before description can be added
+
         for server_name, server_vars in self.get_avd_servers():
             description_set = set([ csv['description'] for csv in self.get_csv(server_name) ])
             if len(description_set) > 1:
