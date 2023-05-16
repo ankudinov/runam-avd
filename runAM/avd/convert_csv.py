@@ -4,6 +4,17 @@ import sys
 import glom
 
 
+def ignore_error(func):
+    def inner_function(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except SystemExit as e:
+            sys.exit(e)  
+        except:
+            pass  # ignore all other errors
+    return inner_function
+
+
 class GlomDict(dict):
 
     def assign(self, glom_path, value):
@@ -35,6 +46,7 @@ def to_avd_yaml(csv_data_directory):
     converter.add_speed()
     converter.add_profile()
     converter.add_enabled_status()
+    converter.add_mode()
 
     return converter.vars
 
@@ -165,3 +177,11 @@ class CSVtoAVDConverter:
             else:
                 sys.exit(f'ERROR: "enabled" key must be set to "true" or "false", but it is set to "{enable_string}" for the {server_name}!')
             self.update_adapters(server_name, {'enabled': enable_bool})
+
+    @ignore_error
+    def add_mode(self):
+        for server_name, _ in self.get_avd_servers():
+            mode_string = self.get_csv(server_name, csv_key='mode', unique=True)[0]
+            if mode_string.lower() not in ['access', 'dot1q-tunnel', 'trunk']:
+                sys.exit(f'ERROR: "mode" key must be set to "access", "dot1q-tunnel" or "trunk", but it is set to "{mode_string}" for the {server_name}!')
+            self.update_adapters(server_name, {'mode': mode_string.lower()})
