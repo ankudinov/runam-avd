@@ -34,6 +34,7 @@ def to_avd_yaml(csv_data_directory):
     converter.add_description()
     converter.add_speed()
     converter.add_profile()
+    converter.add_enabled_status()
 
     return converter.vars
 
@@ -151,5 +152,16 @@ class CSVtoAVDConverter:
 
     def add_profile(self):
         for server_name, _ in self.get_avd_servers():
-            speed_string = self.get_csv(server_name, csv_key='profile', unique=True)[0]
-            self.update_adapters(server_name, {'profile': speed_string})
+            profile_string = self.get_csv(server_name, csv_key='profile', unique=True)[0]
+            self.update_adapters(server_name, {'profile': profile_string})
+
+    def add_enabled_status(self):
+        for server_name, _ in self.get_avd_servers():
+            enable_string = self.get_csv(server_name, csv_key='enabled', unique=True)[0]
+            if enable_string.lower() == "true":
+                enable_bool = True
+            elif enable_string.lower() == "false":
+                enable_bool = False
+            else:
+                sys.exit(f'ERROR: "enabled" key must be set to "true" or "false", but it is set to "{enable_string}" for the {server_name}!')
+            self.update_adapters(server_name, {'enabled': enable_bool})
