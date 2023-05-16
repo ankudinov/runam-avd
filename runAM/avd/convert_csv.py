@@ -60,11 +60,9 @@ class CSVtoAVDConverter:
             csv_value_list = list()
             for csv_dict in self.vars['csv']['servers']:
                 if csv_dict['server_name'] == server_name:
-                    if mandatory:
-                        if csv_key not in csv_dict.keys():
-                            sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but not defined for {server_name}!')
-                        else:
-                            csv_value_list.append(csv_dict[csv_key])
+                    if mandatory and csv_key not in csv_dict.keys():
+                        sys.exit(f'ERROR: CSV key {csv_key} is mandatory, but not defined for {server_name}!')
+                    csv_value_list.append(csv_dict[csv_key])
             if unique:
                 if len(set(csv_value_list)) > 1:
                     sys.exit(f'ERROR: different {csv_key} CSV values were defined for {server_name}. {csv_key} must be unique!')
@@ -103,13 +101,9 @@ class CSVtoAVDConverter:
     def add_rack_name(self):
         # add rack name for a server if defined in CSV file
         for server_name, server_vars in self.get_avd_servers():
-            rack_name_set = set([ csv['rack'] for csv in self.get_csv(server_name) ])
-            if len(rack_name_set) > 1:
-                # error if rack name was added on the previous iteration and is not the same in CSV entries
-                sys.exit(f'ERROR: different rack names specified for the same server ID {server_name}')
-            else:
-                server_vars.update({'rack': list(rack_name_set)[0]})
-                self.vars['avd']['servers'].update({server_name: server_vars})
+            rack_name = self.get_csv(server_name, csv_key='rack', unique=True)[0]
+            server_vars.update({'rack': rack_name})
+            self.vars['avd']['servers'].update({server_name: server_vars})
 
     def add_adapters(self):
         # add adapters for a server
