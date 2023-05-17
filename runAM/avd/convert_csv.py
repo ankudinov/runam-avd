@@ -48,6 +48,7 @@ def to_avd_yaml(csv_data_directory):
     converter.add_enabled_status()
     converter.add_mode()
     converter.add_mtu()
+    converter.add_port_channel()
 
     return converter.vars
 
@@ -204,3 +205,11 @@ class CSVtoAVDConverter:
                     self.update_adapters(server_name, {'mtu': mode_string.lower()})
                 else:
                     sys.exit(f'ERROR: MTU must be between 1 and 9216. It is set to {mtu} for {server_name}! ')
+
+    def add_port_channel(self):
+        for server_name, _ in self.get_avd_servers():
+            port_channel_mode_string = self.get_csv(server_name, csv_key='port_channel.mode', unique=True)[0]
+            if port_channel_mode_string.lower() in ['active', 'passive', 'on']:
+                self.update_adapters(server_name, {'port_channel': {
+                    'mode': port_channel_mode_string.lower()
+                }})
