@@ -1,4 +1,4 @@
 server_name,switch_hostname,switch_port,description,port_channel.mode,port_channel.short_esi,rack,profile,speed,enabled,mode,mtu
 server1, L01, Ethernet1/1, link-to-server1, active, 0000:1234:5678, pod0, A_TRUNK_PROFILE, forced 25gfull,true,access,1500
 server1, L02, Ethernet1/2, link-to-server1, active, 0000:1234:5678, pod0, A_TRUNK_PROFILE, forced 25gfull,true,access,1500
-server2, L02, Ethernet1/1, link-to-server2, off, auto, pod0, A_TRUNK_PROFILE, forced 25gfull,false,trunk,9214
+server2, L02, Ethernet1/1, link-to-server2, on, auto, pod0, A_TRUNK_PROFILE, forced 25gfull,false,trunk,9214

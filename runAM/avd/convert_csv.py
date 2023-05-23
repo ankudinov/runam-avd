@@ -49,6 +49,7 @@ def to_avd_yaml(csv_data_directory):
     converter.add_mode()
     converter.add_mtu()
     converter.add_port_channel()
+    converter.add_port_channel_short_esi()
 
     return converter.vars
 
@@ -108,6 +109,10 @@ class CSVtoAVDConverter:
             sys.exit(f'ERROR: server {server_name} is not present in AVD vars!')
         else:
             return self.vars['avd']['servers'][server_name]
+        
+    def get_adapter(self, server_name):
+        # there is always just a single adapter in the list
+        return self.vars['avd']['servers'][server_name]['adapters'][0]
         
     def update_adapters(self, server_name, new_dict):
         # there is always just a single adapter in the list
@@ -213,3 +218,21 @@ class CSVtoAVDConverter:
                 self.update_adapters(server_name, {'port_channel': {
                     'mode': port_channel_mode_string.lower()
                 }})
+
+    def add_port_channel_short_esi(self):
+        for server_name, _ in self.get_avd_servers():
+            port_channel_short_esi_string = self.get_csv(server_name, csv_key='port_channel.short_esi', unique=True)[0]
+            if port_channel_short_esi_string.lower() == 'auto':
+                pass  # if short esi is set to auto - it's a valid value
+            else:
+                for hex in port_channel_short_esi_string.split(':'):
+                    try:
+                        int(hex, 16)
+                    except Exception as _:
+                        sys.exit(f'ERROR: short_esi must be hex or "auto", but it is set to {port_channel_short_esi_string} for {server_name}!')
+            # if no error detected, set short esi
+            adapter = self.get_adapter(server_name)
+            if 'port_channel' not in adapter.keys():
+                sys.exit(f'ERROR: port_channel.mode must be defined before defining short_esi for {server_name}!')
+            adapter['port_channel'].update({'short_esi': port_channel_short_esi_string})
+            self.update_adapters(server_name, adapter)
