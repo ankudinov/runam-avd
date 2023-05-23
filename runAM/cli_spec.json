@@ -6,7 +6,7 @@
                 "arg_name": "--echo",
                 "arg_short_name": "-e",
                 "action": "store_true",
-                "default": true,
+                "default": false,
                 "help": "Print child module output if available."
             }
         ]
